@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Product {
+  id           String      @id @default(cuid())
+  name         String
+  slug         String      @unique
+  description  String
+  category     String      // Top, Bottom, Accessories
+  subcategory  String      // T-shirts, Polos, Shirts, Sweatshirts, Hoodies, Jackets, Cargos, Jeans, Pants, Shorts, Bags, Caps, Cases
+  price        Float
+  salePrice    Float?
+  isNewDrop    Boolean     @default(false)
+  isBestSeller Boolean     @default(false)
+  isBlindBox   Boolean     @default(false)
+  stock        Int         @default(25)
+  images       String      // JSON array of image URLs
+  colors       String      // JSON array of color strings
+  sizes        String      // JSON array of available sizes (e.g. ["S", "M", "L", "XL"])
+  badge        String?
+  collectionId String?
+  collection   Collection? @relation(fields: [collectionId], references: [id])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Collection {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  tagline     String?
+  season      String?
+  image       String
+  products    Product[]
+  createdAt   DateTime  @default(now())
+}
+
+model Store {
+  id          String   @id @default(cuid())
+  city        String   @unique
+  name        String
+  address     String
+  timing      String
+  phone       String
+  isLiveNow   Boolean  @default(true)
+  mapsUrl     String?
+  imageUrl    String?
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String?
+  tier      String   @default("VIP_MEMBER")
+  createdAt DateTime @default(now())
+}
